@@ -396,14 +396,17 @@ export default async function HomePage() {
             >
               <div className="glass rounded-3xl p-5">
                 <div className="flex items-start justify-between">
-                  <span className="glass-chip block h-14 w-14 overflow-hidden rounded-2xl">
+                  <span
+                    className=" block h-14 w-14 overflow-hidden rounded-2xl"
+                    style={{ marginLeft: "-12px" }}
+                  >
                     <Image
                       src="/logo-fifa.png"
                       alt="FIFA World Cup 26"
                       width={1536}
                       height={1024}
                       unoptimized
-                      className="h-full w-full scale-[2.6] object-cover object-[50%_44%]"
+                      className="h-full w-full scale-[1] object-cover object-[50%_44%]"
                       priority
                     />
                   </span>
