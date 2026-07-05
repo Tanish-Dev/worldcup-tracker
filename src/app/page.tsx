@@ -102,6 +102,8 @@ export default async function HomePage() {
   const lastMatch = [...played].sort(
     (a, b) => +new Date(b.date) - +new Date(a.date),
   )[0];
+  const lastMatchHomeWon = lastMatch?.winnerCode === lastMatch?.homeCode;
+  const lastMatchAwayWon = lastMatch?.winnerCode === lastMatch?.awayCode;
 
   /* ---- team of the day: strongest surviving title contender ---- */
   const aliveRanked = live.alive
@@ -446,10 +448,29 @@ export default async function HomePage() {
                     <span className="text-xs text-white/50">Full time</span>
                   </p>
                   <p className="mt-1.5 text-sm font-light text-white/55">
-                    <span className="text-teal-300">
+                    <span
+                      className={
+                        lastMatchHomeWon
+                          ? "font-medium text-teal-300"
+                          : lastMatchAwayWon
+                            ? "text-white/40"
+                            : ""
+                      }
+                    >
                       {teamName(lastMatch.homeCode)}
                     </span>{" "}
-                    vs {teamName(lastMatch.awayCode)}
+                    vs{" "}
+                    <span
+                      className={
+                        lastMatchAwayWon
+                          ? "font-medium text-teal-300"
+                          : lastMatchHomeWon
+                            ? "text-white/40"
+                            : ""
+                      }
+                    >
+                      {teamName(lastMatch.awayCode)}
+                    </span>
                   </p>
                 </div>
               )}
