@@ -1,13 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Instrument_Serif } from "next/font/google";
 import Nav from "@/components/Nav";
 import SiteLoader from "@/components/SiteLoader";
+import DeveloperSignature from "@/components/DeveloperSignature";
 import "./globals.css";
+import "./typewriter.css";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -31,13 +40,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      className={`${inter.variable} ${instrumentSerif.variable} h-full antialiased`}
+    >
       <body className="min-h-full text-ink-primary">
         <SiteLoader />
         {/* lives in the root layout so it survives every navigation — the
             active-pill indicator animates instead of the nav remounting */}
         <Nav />
         {children}
+        <DeveloperSignature />
       </body>
     </html>
   );

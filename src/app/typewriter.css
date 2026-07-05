@@ -10,14 +10,14 @@
 
 .typewriter {
   position: relative;
-  font-family: Instrument Serif;
+  font-family: var(--font-instrument-serif), Georgia, serif;
   font-style: italic;
-  font-size: 1.1rem;
+  font-size: 0.85rem;
   color: #ffffff66;
   overflow: hidden;
   white-space: nowrap;
   font-weight: 400;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.04em;
   margin-top: 0;
   display: inline-block;
   /* Improved stability across screen sizes */
@@ -25,6 +25,12 @@
   min-width: 1ch;
   max-width: 100%;
   will-change: contents; /* Performance optimization */
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 /* Style for the developer name */
@@ -32,6 +38,14 @@
   color: #ffffff88;
   text-decoration: none;
   font-weight: 500;
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.developer-name:hover,
+.developer-name:focus-visible {
+  opacity: 1;
 }
 
 .typewriter::after {
