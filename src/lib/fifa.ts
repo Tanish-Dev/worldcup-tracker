@@ -135,10 +135,10 @@ function deriveStatuses(matches: LiveMatch[]): {
 
 /**
  * Live tournament state from FIFA's public API.
- * Revalidated every 5 minutes; deduped per request via React cache.
+ * Revalidated every 2 minutes; deduped per request via React cache.
  */
 export const getLiveTournament = cache(async (): Promise<LiveTournament> => {
-  const res = await fetch(MATCHES_URL, { next: { revalidate: 300 } });
+  const res = await fetch(MATCHES_URL, { next: { revalidate: 120 } });
   if (!res.ok) {
     throw new Error(`FIFA API responded ${res.status}`);
   }

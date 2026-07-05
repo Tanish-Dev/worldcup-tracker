@@ -19,6 +19,7 @@ import ForecastCard, {
   type ForecastMatch,
   type ForecastSide,
 } from "@/components/dashboard/ForecastCard";
+import LastUpdated from "@/components/dashboard/LastUpdated";
 import {
   BallIcon,
   CalendarIcon,
@@ -223,6 +224,14 @@ export default async function HomePage() {
   /* ---- match probabilities ---- */
   const power = (code: string | null) =>
     (code && byCode[code]?.powerRating) || 0;
+  // "86'", "90'+3'", "HT" -> minutes played, capped at 90
+  const parseMatchMinute = (t: string | null) => {
+    if (!t) return 0;
+    if (/^HT$/i.test(t.trim())) return 45;
+    const m = t.match(/(\d+)(?:\+(\d+))?/);
+    if (!m) return 0;
+    return Math.min(90, parseInt(m[1], 10) + (m[2] ? parseInt(m[2], 10) : 0));
+  };
   const matchPcts = (m: LiveMatch) => {
     if (m.status === "played") {
       const homeWon = m.winnerCode === m.homeCode;
@@ -232,11 +241,39 @@ export default async function HomePage() {
         awayPct: homeWon ? 0 : 100,
       };
     }
-    const p =
-      odds.matchHomeWinProb[m.matchNumber] ??
-      1 / (1 + Math.exp(-(power(m.homeCode) - power(m.awayCode))));
+    const prematchP = Math.min(
+      0.99,
+      Math.max(
+        0.01,
+        odds.matchHomeWinProb[m.matchNumber] ??
+          1 / (1 + Math.exp(-(power(m.homeCode) - power(m.awayCode)))),
+      ),
+    );
     // knockout ties are settled on penalties; only group games can end level
-    const drawPct = m.phase === "Group stage" ? 24 : 0;
+    const canDraw = m.phase === "Group stage";
+
+    if (m.status !== "live") {
+      const drawPct = canDraw ? 24 : 0;
+      return {
+        homePct: (100 - drawPct) * prematchP,
+        drawPct,
+        awayPct: (100 - drawPct) * (1 - prematchP),
+      };
+    }
+
+    // live: blend the pre-match prior with the actual scoreline, weighting
+    // the scoreline more heavily as less time remains for it to change
+    const remaining = (90 - parseMatchMinute(m.matchTime)) / 90;
+    const goalDiff = (m.homeScore ?? 0) - (m.awayScore ?? 0);
+    const preLogit = Math.log(prematchP / (1 - prematchP));
+    const goalLogit = goalDiff * (1.4 + 2.2 * (1 - remaining));
+    const p = 1 / (1 + Math.exp(-(preLogit * remaining + goalLogit)));
+    const drawPct = !canDraw
+      ? 0
+      : goalDiff === 0
+        ? 24 + (100 - 24) * (1 - remaining)
+        : (24 * remaining) / (1 + Math.abs(goalDiff));
+
     return {
       homePct: (100 - drawPct) * p,
       drawPct,
@@ -431,6 +468,9 @@ export default async function HomePage() {
                 <p className="mt-2 text-sm leading-relaxed font-light text-white/55">
                   Live AI insights from the {live.currentPhase.toLowerCase()}.
                 </p>
+                <div className="mt-3">
+                  <LastUpdated fetchedAt={live.fetchedAt} />
+                </div>
               </div>
 
               {lastMatch && (
