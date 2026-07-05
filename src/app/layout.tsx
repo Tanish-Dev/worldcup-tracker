@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Nav from "@/components/Nav";
+import SiteLoader from "@/components/SiteLoader";
 import "./globals.css";
 
 const inter = Inter({
@@ -32,6 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full text-ink-primary">
+        <SiteLoader />
         {/* lives in the root layout so it survives every navigation — the
             active-pill indicator animates instead of the nav remounting */}
         <Nav />
