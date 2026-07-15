@@ -478,6 +478,15 @@ export default async function HomePage() {
                 </div>
               </div>
 
+              {/* phone-only: first content section after the hero. Anything
+                  sm and up (tablet, laptop, desktop) keeps the original
+                  order via the sm:block twin below in the right column. */}
+              {forecast && (
+                <div className="sm:hidden">
+                  <ForecastCard match={forecast} />
+                </div>
+              )}
+
               {lastMatch && (
                 <div className="glass rounded-3xl p-5">
                   <div className="flex items-start justify-between">
@@ -637,7 +646,11 @@ export default async function HomePage() {
 
             {/* ------------------------------ right column ------------------------------ */}
             <aside className="flex flex-col gap-4 xl:col-start-3 xl:row-start-1 xl:row-span-2">
-              {forecast && <ForecastCard match={forecast} />}
+              {forecast && (
+                <div className="hidden sm:block">
+                  <ForecastCard match={forecast} />
+                </div>
+              )}
               <StandingsCard
                 byGroup={standingsByGroup}
                 initialGroup={initialGroup}
